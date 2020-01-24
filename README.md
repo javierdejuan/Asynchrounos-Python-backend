@@ -82,4 +82,8 @@ Restart=on-failure
 [Install]
 WantedBy=multi-user.target
 
-'''
+```
+name it ```webServiceQueue.service```.
+
+The service should start under the following command: ``` service webServiceQueue start```, you can stop it with ``` service webServiceQueue stop``` and to follow the entry into the journal log, type ```journalctl -u webServiceQueue -f```.
+In a developmente environnement, remember to execute ````systemctl daemon-reload```` every time you change the webServiceQueue.service file.
