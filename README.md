@@ -88,7 +88,7 @@ asyncio.get_event_loop().run_forever()
 So far, we have a nice Python script which enables an asynchronous websocketserver. Unfortunaly, my jobs cannot run in asynchronous mode, since I am calling third party modules and they do not support this functionality. This implies that every websocket.recv() -> sync job -> websocket.send() block behaves in a synchronous way. 
 To avoid this problem, instead of processing each job in the handler function, I delegate them pushing the job in a queue. Since, queueing process is very fast, we can then have a pseudo-asynchronous behaviour.
 
-The enqueue process is done via [Redis](https://redis.io/). I decided to choose Redis because it is writting in C and it is optimized for jobbing Python functions. 
+The enqueue process is done via [Redis](https://redis.io/). I decided to choose Redis because it is writting in C, it is light and fast, and it is optimized for jobbing Python functions. 
 
 To deploy this websocket service in production and avoiding to manually execute the script, we are going to build a systemd service wrapper:
 Go to  your ```var/systemd/system``` directory and create the service file, like this one:
@@ -110,7 +110,7 @@ WantedBy=multi-user.target
 ```
 name it ```webServiceQueue.service```.
 
-As I am using a Python Environments, we need to tell the service which is the appropiate Python version. The easiest way is to copy the directory from your environment into the ExecStart section of the service (In my case,it```/var/speechrecognition/googlespeech/bin/python3 ```)
+As I am using a Python Environments, we need to tell the service which is the appropiate Python version. The easiest way is to copy the directory from your environment into the ExecStart section of the service (In my case is ```/var/speechrecognition/googlespeech/bin/python3 ```)
 
 The service should start under the following command: ``` service webServiceQueue start```, you can stop it with ``` service webServiceQueue stop``` and to follow the entry into the journal log, type ```journalctl -u webServiceQueue -f```.
 In a developmente environnement, remember to execute ````systemctl daemon-reload```` every time you change the webServiceQueue.service file.
@@ -123,4 +123,29 @@ any WebSocketClientTester from the internet, enter your websocket service creden
 Now, let's head the worker side of the process.
 
 ### The Worker Service
+
+To execute jobs by a worker in Redis, just type ```rq worker``` from your directory. This will execute jobs in a worker thread.
+The magic of Redis helps us to detach queueing process from job execution process. You will have an ouput like this:
+<<< rq worker >>>
+
+The last step is quite straight forward. We need to create another systemd service to host the ```rq worker``` command:
+
+```
+
+[Unit]
+Description="rq worker for GitHub blog"
+
+[Service]
+WorkingDirectory=/var/www/html/mysmartlab/
+
+ExecStart=/var/speechrecognition/googlespeech/bin/rq worker --path /var/speechrecognition/
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+
+```
+Type a rqworker.service file and fill in it. The ´´´--path´´´ option is used to "include" the directory of your Python modules to solve dependencies. In the other hand, the workingDirectory statement is the directory where the jobs are executed.  
+
 
