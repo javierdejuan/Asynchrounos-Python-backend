@@ -121,3 +121,7 @@ In a developmente environnement, remember to execute ````systemctl daemon-reload
 So far we have a systemd service which handles Http requests and delegate the jobs via a Redis queue. For testing purposes, just pick up 
 any WebSocketClientTester from the internet, enter your websocket service credentials and send a message. In my case, I have used a chrome extension in my browser like [this](https://chrome.google.com/webstore/detail/simple-websocket-client/pfdhoblngboilpfeibdedpjgfnlcodoo?hl=en) one.
 
+Now, let's head the worker side of the process.
+
+### The Worker Service
+
