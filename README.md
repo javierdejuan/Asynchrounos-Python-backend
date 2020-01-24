@@ -14,7 +14,7 @@ Finaly we need to deploy two services under some kind of OS management, as super
 ## The Wbsocketservice
 I choose websocket library from Python, which need asyncio modules to run. Below you can find a pattern script.
 
-```
+```Python
 # WS server example
 from rq import Queue
 from redis import Redis
