@@ -110,13 +110,12 @@ WantedBy=multi-user.target
 ```
 name it ```webServiceQueue.service```.
 
-As I am using a Python Environments, we need to tell the service the appropiate Python version. The easiest way is to copy the directory 
-of your Python executable into the ExecStart section of the service.
+As I am using a Python Environments, we need to tell the service which is the appropiate Python version. The easiest way is to copy the directory from your environment into the ExecStart section of the service (In my case,it```/var/speechrecognition/googlespeech/bin/python3 ```)
 
 The service should start under the following command: ``` service webServiceQueue start```, you can stop it with ``` service webServiceQueue stop``` and to follow the entry into the journal log, type ```journalctl -u webServiceQueue -f```.
 In a developmente environnement, remember to execute ````systemctl daemon-reload```` every time you change the webServiceQueue.service file.
 
-(be sure to add the ```-u``` option to have real time logging in ```journalctl``` entry)
+(be sure to add the ```Python -u``` option to have real time logging in ```journalctl``` entry)
 
 So far we have a systemd service which handles Http requests and delegate the jobs via a Redis queue. For testing purposes, just pick up 
 any WebSocketClientTester from the internet, enter your websocket service credentials and send a message. In my case, I have used a chrome extension in my browser like [this](https://chrome.google.com/webstore/detail/simple-websocket-client/pfdhoblngboilpfeibdedpjgfnlcodoo?hl=en) one.
