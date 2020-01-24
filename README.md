@@ -68,7 +68,7 @@ asyncio.get_event_loop().run_until_complete(start_server)
 ```
 then in your ```var/systemd/system``` create the service file, like this one:
 
-'''
+```
 
 Description="websocket service queue for mySmartlab"
 
@@ -77,7 +77,6 @@ WorkingDirectory=/var/speechrecognition/
 
 ExecStart=/var/speechrecognition/googlespeech/bin/python3 -u /var/speechrecognition/websocketserverqueue.py
 Restart=on-failure
-
 
 
 [Install]
