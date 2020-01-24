@@ -12,7 +12,7 @@ Then, we need to use a queue manager to send jobs to the workers.
 Finaly we need to deploy two services under some kind of OS management, as supervisor, systemd or similars.
 
 ## The Wbsocketservice
-I choose websocket library from Python, which need asyncio modules to run.
+I choose websocket library from Python, which need asyncio modules to run. Below you can find a pattern script.
 
 ```
 # WS server example
@@ -26,10 +26,12 @@ from <myJobFunctions> import *
 
 def processJob(inputfile,language,EsIndex,smartvideo_id):
 
+    # we are going to use RQ Redis to push jobs in a queue
     # Tell RQ what Redis connection to use
     
     redis_conn = Redis()
 
+    # get an instance of the queue
     q = Queue(connection=redis_conn)
  
     # enqueue transcription job
@@ -45,13 +47,23 @@ def processJob(inputfile,language,EsIndex,smartvideo_id):
 async def hello(websocket, path):
     try:
 
+        # waitingfor an http request
+        
         message = await websocket.recv()
+        
+        # process the request, parse arguement and send it to process
+        
         data =json.loads(message)
         inputfile=data['file']
         language=data['language']
         EsIndex=data['ESIndex']
         smartvideo_id=data['smartvideo_id']
+        
+        # proceessJob
         processJob(inputfile,language,EsIndex,smartvideo_id)
+        
+        # notify webclientsocket that the jobs are enqueued
+        
         await websocket.send(f"[{time.ctime()}] webserverfunction:queued recognition process for file:{inputfile}, language:{lang$
 
 
@@ -66,6 +78,8 @@ asyncio.get_event_loop().run_until_complete(start_server)
 
     
 ```
+
+
 then in your ```var/systemd/system``` create the service file, like this one:
 
 ```
