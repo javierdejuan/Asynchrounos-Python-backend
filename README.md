@@ -1,5 +1,5 @@
 # Asynchrounos-Python-backend
-Building an Asynchrounos Python backend to process speech transcriptions requests from http
+Building an Asynchrounos Python backend to process speech transcriptions requests from http.
 
 ## Requirements
 A random user asks through an html front end to transcribe video speech.The user will send a Youtube URL as well as the language used in the video. 
