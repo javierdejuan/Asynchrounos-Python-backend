@@ -13,6 +13,7 @@ Finaly we need to deploy two services under some kind of OS management, as super
 
 ## The Wbsocketservice
 I choose websocket library from Python, which need asyncio modules to run.
+
 ```
 # WS server example
 from rq import Queue
@@ -21,9 +22,7 @@ import asyncio
 import websockets
 import time
 import json
-from transcribe import *
-from transcribeFLAC import *
-from bulkInjectionES import *
+from <myJobFunctions> import *
 
 def processJob(inputfile,language,EsIndex,smartvideo_id):
 
@@ -35,11 +34,53 @@ def processJob(inputfile,language,EsIndex,smartvideo_id):
  
     # enqueue transcription job
     
-    job = q.enqueue(transcribefromURL,inputfile,language)
+    job = q.enqueue(transcribe,inputfile,language)
     
     # enqueue ElasticSearch Injection job
     
-    job = q.enqueue(ElasticInjection)
+    job = q.enqueue(ElasticInjection,EsIndex)
     
+      return
+
+async def hello(websocket, path):
+    try:
+
+        message = await websocket.recv()
+        data =json.loads(message)
+        inputfile=data['file']
+        language=data['language']
+        EsIndex=data['ESIndex']
+        smartvideo_id=data['smartvideo_id']
+        processJob(inputfile,language,EsIndex,smartvideo_id)
+        await websocket.send(f"[{time.ctime()}] webserverfunction:queued recognition process for file:{inputfile}, language:{lang$
+
+
+    except Exception as ex:
+        print(ex)
+
+
+    return
+
+start_server = websockets.serve(hello, <your server IP>,<your server socket port>,ping_timeout=None)
+asyncio.get_event_loop().run_until_complete(start_server)
+
     
 ```
+then in your ```var/systemd/system``` create the service file, like this one:
+
+'''
+
+Description="websocket service queue for mySmartlab"
+
+[Service]
+WorkingDirectory=/var/speechrecognition/
+
+ExecStart=/var/speechrecognition/googlespeech/bin/python3 -u /var/speechrecognition/websocketserverqueue.py
+Restart=on-failure
+
+
+
+[Install]
+WantedBy=multi-user.target
+
+'''
