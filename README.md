@@ -72,14 +72,25 @@ async def hello(websocket, path):
 
 
     return
+# configure your websocket port and IP, and tell websocket what is your function handler, in my case is hello
 
 start_server = websockets.serve(hello, <your server IP>,<your server socket port>,ping_timeout=None)
+
+# loop
+
 asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever()
+
+
 
     
 ```
 
+So far, we have a nice Python script which enables a websocketserver. Unfortunaly, my jobs cannot run in asynchronous mode, since I am calling third party modules and they do not support this functionality. This implies that every websocket.recv() -> sync job -> websocket.send() block behaves in a synchronous way. 
+To avoid this problem, instead of processing each job in the handler function, I delegate them pushing the job in a queue. Since, queueing process is very fast, we can then have a pseud-asynchronous behaviour.
 
+The enqueue process is done via [Redis](https://redis.io/)
+To deploy this in production and avoiding to manually execute the script, we are going to build a systemd service wrapper:
 then in your ```var/systemd/system``` create the service file, like this one:
 
 ```
