@@ -69,10 +69,9 @@ async def hello(websocket, path):
 
     except Exception as ex:
         print(ex)
-
-
     return
-# configure your websocket port and IP, and tell websocket what is your function handler, in my case is hello
+    
+# configure your websocket port and IP, and tell websocket what is your function handler, in my case is "hello"
 
 start_server = websockets.serve(hello, <your server IP>,<your server socket port>,ping_timeout=None)
 
