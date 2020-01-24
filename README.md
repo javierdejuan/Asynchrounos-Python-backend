@@ -146,6 +146,8 @@ WantedBy=multi-user.target
 
 
 ```
-Type a rqworker.service file and fill in it. The ```--path``` option is used to "include" the directory of your Python modules to solve dependencies. In the other hand, the workingDirectory statement is the directory where the jobs are executed.  
+Type a rqworker.service file and fill in it. The ```--path``` option is used to "include" the directory of your Python modules to solve dependencies. In the other hand, the WorkingDirectory statement is the directory where the jobs are executed.  
 
+### Conclusions
 
+This tutorial shows an elegant and light Python backend which enables asynchronous behavour in you web application. Websocketservices also can be replaced with API REST. It has been done keeping things simple and clear. Of course, there are many other solutions to this problem, but here I have solved it using only the necessary elements avoiding a huge installation of external modules.  
